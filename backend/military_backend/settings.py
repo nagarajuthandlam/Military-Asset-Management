@@ -1,24 +1,24 @@
-"""
-Django settings for military_backend project.
-"""
-
 from pathlib import Path
+import os
 
+# Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Security
-SECRET_KEY = "django-insecure-7ybbby&xo17vax_ga($a_9@z97d5x!38@^6amos2se!w#ki^#v"
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
+    "military_asset_secret_key_2026"
+)
 
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS",
+    "*"
+).split(",")
 
-
-# --------------------------------------------------
-# INSTALLED APPS
-# --------------------------------------------------
+# Installed Apps
 INSTALLED_APPS = [
-    # Django Apps
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -26,25 +26,22 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # Third Party Apps
+    # Third-party apps
     "rest_framework",
     "corsheaders",
 
-    # Project Apps
+    # Your apps
     "users",
     "dashboard_app",
     "purchases",
     "transfers",
     "assignments",
+    "logs",
 ]
 
-
-# --------------------------------------------------
-# MIDDLEWARE
-# --------------------------------------------------
+# Middleware
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
-
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -73,70 +70,37 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "military_backend.wsgi.application"
 
-
-# --------------------------------------------------
-# MYSQL DATABASE
-# --------------------------------------------------
+# Database (SQLite for Render)
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "military_assets_db",
-        "USER": "root",
-        "PASSWORD": "Neeru@950",
-        "HOST": "localhost",
-        "PORT": "3306",
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
+# Password validation
+AUTH_PASSWORD_VALIDATORS = []
 
-# --------------------------------------------------
-# PASSWORD VALIDATION
-# --------------------------------------------------
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
-]
-
-
-# --------------------------------------------------
-# LANGUAGE & TIME
-# --------------------------------------------------
+# Internationalization
 LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = "Asia/Kolkata"
-
 USE_I18N = True
-
 USE_TZ = True
 
-
-# --------------------------------------------------
-# STATIC FILES
-# --------------------------------------------------
+# Static files
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-
-# --------------------------------------------------
-# CORS SETTINGS
-# --------------------------------------------------
+# CORS (Allow Vercel frontend)
 CORS_ALLOW_ALL_ORIGINS = True
 
+CORS_ALLOWED_ORIGINS = [
+    "https://military-asset-management-beta-rose.vercel.app",
+]
 
-# --------------------------------------------------
-# DJANGO REST FRAMEWORK
-# --------------------------------------------------
+# REST Framework
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
